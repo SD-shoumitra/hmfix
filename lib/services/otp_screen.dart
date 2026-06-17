@@ -1,0 +1,271 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../home_screen.dart';
+
+class OTPScreen extends StatefulWidget {
+  final String phoneNumber;
+  final String verificationId;
+  final String userName;
+  final String role;
+  final String password;
+
+  const OTPScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.verificationId,
+    required this.userName,
+    this.role = "user",
+    this.password = "",
+  });
+
+  @override
+  State<OTPScreen> createState() => _OTPScreenState();
+}
+
+class _OTPScreenState extends State<OTPScreen> {
+  final List<TextEditingController> _controllers = List.generate(6, (index) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+
+  int _timerSeconds = 60;
+  bool _isLoading = false;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          if (_timerSeconds > 0) {
+            _timerSeconds--;
+          } else {
+            _timer?.cancel();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    for (var node in _focusNodes) {
+      node.dispose();
+    }
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _verifyOTP() async {
+    String otp = _controllers.map((e) => e.text).join();
+
+    if (otp.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("৬ সংখ্যার OTP দিন")),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId,
+        smsCode: otp,
+      );
+
+      // ১. ফোন নাম্বার দিয়ে সাইন ইন (OTP ভেরিফাই)
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // ২. ইমেইল/পাসওয়ার্ড লিঙ্ক করা
+      if (widget.password.isNotEmpty) {
+        try {
+          AuthCredential emailAuth = EmailAuthProvider.credential(
+            email: "${widget.phoneNumber}@hmfix.com",
+            password: widget.password,
+          );
+          await userCredential.user!.linkWithCredential(emailAuth);
+        } catch (e) {
+          debugPrint("Link Error: $e");
+        }
+      }
+
+      // ৩. ডাটাবেজে তথ্য সেভ করা
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.phoneNumber)
+          .set({
+        "uid": userCredential.user!.uid,
+        "name": widget.userName,
+        "phone": widget.phoneNumber,
+        "email": "${widget.phoneNumber}@hmfix.com",
+        "password": widget.password,
+        "role": widget.role,
+        "createdAt": Timestamp.now(),
+      }, SetOptions(merge: true));
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Center(
+                child: Container(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8F0FE),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Icon(Icons.verified_user_outlined, size: 60, color: Color(0xFF0066FF)),
+                ),
+              ),
+              const SizedBox(height: 32),
+              const Text(
+                'OTP ভেরিফিকেশন',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1E1E1E)),
+              ),
+              const SizedBox(height: 12),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: const TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
+                  children: [
+                    const TextSpan(text: 'আমরা একটি কোড পাঠিয়েছি \n'),
+                    TextSpan(
+                      text: '+88 ${widget.phoneNumber}',
+                      style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(6, (index) {
+                  return Container(
+                    width: 48,
+                    height: 58,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _controllers[index],
+                      focusNode: _focusNodes[index],
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      maxLength: 1,
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF0066FF)),
+                      decoration: InputDecoration(
+                        counterText: "",
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: const BorderSide(color: Color(0xFFEBF0FF)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: const BorderSide(color: Color(0xFF0066FF), width: 2),
+                        ),
+                        fillColor: const Color(0xFFF8FAFF),
+                        filled: true,
+                      ),
+                      onChanged: (value) {
+                        if (value.isNotEmpty && index < 5) {
+                          _focusNodes[index + 1].requestFocus();
+                        } else if (value.isEmpty && index > 0) {
+                          _focusNodes[index - 1].requestFocus();
+                        }
+                        if (value.isNotEmpty && index == 5) {
+                          FocusScope.of(context).unfocus();
+                        }
+                      },
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _verifyOTP,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0066FF),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                    elevation: 0,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                      : const Text('ভেরিফাই এবং এগিয়ে যান', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(height: 32),
+              Column(
+                children: [
+                  const Text('কোড পাননি?', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  const SizedBox(height: 8),
+                  _timerSeconds > 0
+                      ? Text('পুনরায় পাঠান (${_timerSeconds}s)', style: const TextStyle(color: Colors.black54, fontWeight: FontWeight.bold, fontSize: 14))
+                      : TextButton(
+                          onPressed: () {
+                            setState(() { _timerSeconds = 60; _startTimer(); });
+                          },
+                          child: const Text(
+                            'কোড পুনরায় পাঠান',
+                            style: TextStyle(color: Color(0xFF0066FF), fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                        ),
+                ],
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
