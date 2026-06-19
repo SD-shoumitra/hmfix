@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'worker_dashboard.dart';
 
 class WorkerMyJobsScreen extends StatefulWidget {
   const WorkerMyJobsScreen({super.key});
@@ -10,8 +11,8 @@ class WorkerMyJobsScreen extends StatefulWidget {
 }
 
 class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
-  int _selectedFilterIndex = 0;
-  final List<String> _filters = ["সব", "চলমান", "সম্পন্ন", "ক্যানসেল"];
+  int _selectedFilterIndex = 1;
+  final List<String> _filters = ["সব", "চলমান", "সম্পন্ন"];
   
   String? _getWorkerPhone() {
     final user = FirebaseAuth.instance.currentUser;
@@ -35,8 +36,15 @@ class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1B263B)),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const WorkerDashboard(),
+              ),
+            );
+          },
         ),
         title: const Text(
           "আমার কাজ",
@@ -52,38 +60,53 @@ class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
         children: [
           // Filter Bar
           Container(
-            height: 60,
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _filters.length,
-              itemBuilder: (context, index) {
+            height: 65,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
+              children: List.generate(_filters.length, (index) {
                 bool isSelected = _selectedFilterIndex == index;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: InkWell(
-                    onTap: () => setState(() => _selectedFilterIndex = index),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF0066FF) : Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Text(
-                        _filters[index],
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.grey.shade600,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: InkWell(
+                      onTap: () => setState(() => _selectedFilterIndex = index),
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFF0066FF) : const Color(0xFFF1F4F8),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: isSelected ? [
+                            BoxShadow(
+                              color: const Color(0xFF0066FF).withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            )
+                          ] : [],
+                        ),
+                        child: Text(
+                          _filters[index],
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.blueGrey.shade700,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 );
-              },
+              }),
             ),
           ),
           
@@ -138,13 +161,6 @@ class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
       query = query.where(
         'status',
         isEqualTo: 'completed',
-      );
-    }
-
-    else if (_selectedFilterIndex == 3) {
-      query = query.where(
-        'status',
-        isEqualTo: 'rejected',
       );
     }
 
@@ -206,7 +222,7 @@ class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
                   ),
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.grey),
+
             ],
           ),
           const SizedBox(height: 12),

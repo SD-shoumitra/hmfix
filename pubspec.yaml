@@ -67,6 +67,7 @@ flutter:
   - image/logo_page.png
   - image/register_hero.png
   - image/worker_register_hero.png
+  - image/splash.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -26,13 +26,11 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
 
   final List<Map<String, dynamic>> services = [
     {'name': 'ইলেকট্রিশিয়ান', 'icon': Icons.electric_bolt, 'color': Colors.orange},
-    {'name': 'প্লাম্বর', 'icon': Icons.plumbing, 'color': Colors.blue},
+    {'name': 'প্লাম্বার', 'icon': Icons.plumbing, 'color': Colors.blue},
     {'name': 'এসি সার্ভিস', 'icon': Icons.ac_unit, 'color': Colors.cyan},
     {'name': 'বাবুর্চি', 'icon': Icons.restaurant, 'color': Colors.amber},
     {'name': 'কসাই', 'icon': Icons.kebab_dining, 'color': Colors.red},
-    {'name': 'পেইন্টার', 'icon': Icons.format_paint, 'color': Colors.orangeAccent},
-    {'name': 'হোম টিউটর', 'icon': Icons.menu_book, 'color': Colors.redAccent},
-    {'name': 'অ্যাম্বুলেন্স', 'icon': Icons.medical_services, 'color': Colors.red},
+    {'name': 'ক্লিনার', 'icon': Icons.format_paint, 'color': Colors.orangeAccent},
   ];
 
   final List<String> experienceLevels = [
@@ -189,9 +187,31 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () async {
+
                     String phone = _phoneController.text.trim();
 
+                    String email = _emailController.text.trim();
+
+                    if (email.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("ইমেইল দিন")),
+                      );
+                      return;
+                    }
+
+                    bool isValidEmail = RegExp(
+                      r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$',
+                    ).hasMatch(email);
+
+                    if (!isValidEmail) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("সঠিক ইমেইল দিন")),
+                      );
+                      return;
+                    }
+
                     if (phone.isEmpty) {
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('অনুগ্রহ করে মোবাইল নাম্বার দিন')),
                       );

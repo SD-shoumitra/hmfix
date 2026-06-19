@@ -10,6 +10,9 @@ class UserProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
+    if (user == null) {
+      return const LoginScreen();
+    }
     // user to phone number logic
     String? userPhone;
     if (user != null) {

@@ -55,7 +55,7 @@ class UserBookConfirm extends StatelessWidget {
 
                 const SizedBox(height: 32),
                 const Text(
-                  "রিকোয়েস্ট সফল!",
+                  "অনুরোধ সফল হয়েছে!",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -149,7 +149,7 @@ class UserBookConfirm extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "রিকোয়েস্টের তথ্য",
+                        "অনুরোধের তথ্য",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -190,7 +190,7 @@ class UserBookConfirm extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          "${worker['name'] ?? ''} এর কাছে আপনার রিকোয়েস্ট পাঠানো হয়েছে। তিনি শীঘ্রই আপনার সাথে যোগাযোগ করবেন।",
+                          "${worker['name'] ?? ''} এর কাছে আপনার অনুরোধপাঠানো হয়েছে। তিনি শীঘ্রই আপনার সাথে যোগাযোগ করবেন।",
                           style: const TextStyle(
                             fontSize: 14,
                             color: Color(0xFF1B263B),

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'login.dart';
 import 'worker_edit_profile.dart';
+import 'worker_dashboard.dart';
 
 class WorkerProfileScreen extends StatelessWidget {
   const WorkerProfileScreen({super.key});
@@ -36,8 +37,18 @@ class WorkerProfileScreen extends StatelessWidget {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E232C)),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color(0xFF1E232C),
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const WorkerDashboard(),
+              ),
+            );
+          },
         ),
         actions: [
           IconButton(

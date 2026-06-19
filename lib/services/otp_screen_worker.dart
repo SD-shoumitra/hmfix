@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../home_screen.dart';
+import '../worker_dashboard.dart';
 
 class WorkerOTPScreen extends StatefulWidget {
   final String phoneNumber;
@@ -96,7 +96,7 @@ class _WorkerOTPScreenState extends State<WorkerOTPScreen> {
       if (widget.password.isNotEmpty) {
         try {
           AuthCredential emailAuth = EmailAuthProvider.credential(
-            email: widget.email,
+            email: "${widget.phoneNumber}@hmfix.com",
             password: widget.password,
           );
 
@@ -114,7 +114,7 @@ class _WorkerOTPScreenState extends State<WorkerOTPScreen> {
         "uid": userCredential.user!.uid,
         "name": widget.userName,
         "phone": widget.phoneNumber,
-        "email": widget.email,
+        "email": "${widget.phoneNumber}@hmfix.com",
         "role": "worker",
 
         "serviceType": widget.serviceType,
@@ -141,7 +141,7 @@ class _WorkerOTPScreenState extends State<WorkerOTPScreen> {
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const WorkerDashboard()),
         (route) => false,
       );
     } catch (e) {

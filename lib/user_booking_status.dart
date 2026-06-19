@@ -14,6 +14,140 @@ class _UserBookingStatusScreenState extends State<UserBookingStatusScreen> {
   int _selectedFilterIndex = 0;
   final List<String> _filters = ["সব", "চলমান", "সম্পন্ন", "ক্যানসেল"];
 
+  void _showReviewDialog(
+      String bookingId,
+      String workerPhone,
+      ){
+    double rating = 5;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            "Rate Worker",
+          ),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  Column(
+                    children: [
+
+                      Text(
+                        "${rating.toInt()} ⭐",
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          5,
+                              (index) => IconButton(
+                            icon: Icon(
+                              Icons.star,
+                              size: 35,
+                              color: index < rating
+                                  ? Colors.orange
+                                  : Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                rating = index + 1.0;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  )
+
+                ],
+              );
+            },
+          ),
+          actions: [
+
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {
+
+                await FirebaseFirestore.instance
+                    .collection('ratings')
+                    .add({
+                  'bookingId': bookingId,
+                  'workerPhone': workerPhone,
+                  'customerUid':
+                  FirebaseAuth.instance.currentUser!.uid,
+                  'rating': rating,
+                  'createdAt': FieldValue.serverTimestamp(),
+                });
+
+                // Calculate average rating
+                final ratingsSnapshot =
+                await FirebaseFirestore.instance
+                    .collection('ratings')
+                    .where(
+                  'workerPhone',
+                  isEqualTo: workerPhone,
+                )
+                    .get();
+
+                double total = 0;
+
+                for (var doc in ratingsSnapshot.docs) {
+                  total +=
+                      (doc['rating'] as num).toDouble();
+                }
+
+                double avgRating =
+                ratingsSnapshot.docs.isEmpty
+                    ? 0
+                    : total /
+                    ratingsSnapshot.docs.length;
+
+                // Update worker document
+                await FirebaseFirestore.instance
+                    .collection('workers')
+                    .doc(workerPhone)
+                    .update({
+                  'rating': avgRating,
+                  'totalRatings':
+                  ratingsSnapshot.docs.length,
+                });
+
+                // Hide rating button
+                await FirebaseFirestore.instance
+                    .collection('requests')
+                    .doc(bookingId)
+                    .update({
+                  'hasReviewed': true,
+                });
+
+                Navigator.pop(context);
+              },
+              child: const Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -293,6 +427,36 @@ class _UserBookingStatusScreenState extends State<UserBookingStatusScreen> {
                 ),
               ),
             ),
+            if (status == 'completed' &&
+            booking['hasReviewed'] != true) ...[
+              const SizedBox(height: 10),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(
+                    Icons.star,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    "রেটিং দিন",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                  ),
+                    onPressed: () {
+                      _showReviewDialog(
+                      bookingId,
+                      booking['workerPhone'],
+                      );
+                      },
+
+                ),
+              ),
+            ],
 
           ],
         ),

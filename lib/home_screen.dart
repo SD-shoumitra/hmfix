@@ -4,9 +4,28 @@ import 'login.dart';
 import 'user_profile.dart';
 import 'user_electric.dart';
 import 'user_booking_status.dart';
+import 'user_emergency.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  String _getBanglaDate() {
+    final now = DateTime.now();
+    final dayNames = ['সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার', 'রবিবার'];
+    final monthNames = [
+      'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
+      'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'
+    ];
+
+    String dayName = dayNames[now.weekday - 1];
+    String monthName = monthNames[now.month - 1];
+    
+    // Simple digit conversion to Bangla
+    String day = now.day.toString().replaceAll('0', '০').replaceAll('1', '১').replaceAll('2', '২').replaceAll('3', '৩').replaceAll('4', '৪').replaceAll('5', '৫').replaceAll('6', '৬').replaceAll('7', '৭').replaceAll('8', '৮').replaceAll('9', '৯');
+    String year = now.year.toString().replaceAll('0', '০').replaceAll('1', '১').replaceAll('2', '২').replaceAll('3', '৩').replaceAll('4', '৪').replaceAll('5', '৫').replaceAll('6', '৬').replaceAll('7', '৭').replaceAll('8', '৮').replaceAll('9', '৯');
+
+    return '$dayName, $day $monthName $year';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,40 +40,37 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF3F7FF),
           appBar: AppBar(
+            toolbarHeight: 95, // AppBar এর উচ্চতা বাড়ানো হলো
             backgroundColor: bgColor,
             elevation: 0,
             surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black87),
-              onPressed: () {},
-            ),
+            automaticallyImplyLeading: false, 
             centerTitle: false,
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  'image/logo.png',
-                  height: 35,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'হোমফিক্স',
-                  style: TextStyle(
-                    color: Color(0xFF0066FF),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
+            title: Padding(
+              padding: const EdgeInsets.only(top: 25.0, left: 4.0), // লোগো এবং নাম নিচে নামানো হলো
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'image/logo.png',
+                    height: 40,
+                    fit: BoxFit.contain,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  const Text(
+                    'হোমফিক্স',
+                    style: TextStyle(
+                      color: Color(0xFF0066FF),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+                ],
+              ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_none, color: Colors.black87),
-                onPressed: () {},
-              ),
               Padding(
-                padding: const EdgeInsets.only(right: 12.0),
+                padding: const EdgeInsets.only(top: 25.0, right: 16.0), // প্রোফাইল আইকন নিচে নামানো হলো
                 child: GestureDetector(
                   onTap: () {
                     if (currentUser != null) {
@@ -70,12 +86,12 @@ class HomeScreen extends StatelessWidget {
                     }
                   },
                   child: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: const Color(0xFFE0E0E0),
+                    radius: 20,
+                    backgroundColor: const Color(0xFFF0F4FF),
                     child: Icon(
                       currentUser != null ? Icons.person : Icons.login,
                       color: const Color(0xFF0066FF),
-                      size: 20,
+                      size: 24,
                     ),
                   ),
                 ),
@@ -91,49 +107,13 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     children: [
-                      const Icon(Icons.location_on, color: Color(0xFF0066FF), size: 18),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'ধানমন্ডি, ঢাকা',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      const Icon(Icons.calendar_today, color: Color(0xFF0066FF), size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        _getBanglaDate(),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
                       ),
-                      const Icon(Icons.keyboard_arrow_down, color: Color(0xFF0066FF)),
                     ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'আপনি কোন সার্ভিসটি খুঁজছেন?',
-                        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                        suffixIcon: Container(
-                          margin: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE8F0FE),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(Icons.tune, color: Color(0xFF0066FF), size: 20),
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -147,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(28),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withAlpha(38), 
                           blurRadius: 20,
                           spreadRadius: 1,
                           offset: const Offset(0, 10),
@@ -174,8 +154,8 @@ class HomeScreen extends StatelessWidget {
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                                 colors: [
-                                  const Color(0xFFE3F2FD).withOpacity(0.95),
-                                  const Color(0xFFE3F2FD).withOpacity(0.0),
+                                  const Color(0xFFE3F2FD).withAlpha(242), 
+                                  const Color(0xFFE3F2FD).withAlpha(0), 
                                 ],
                                 stops: const [0.4, 0.8],
                               ),
@@ -194,7 +174,7 @@ class HomeScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
+                                        color: Colors.black.withAlpha(12), 
                                         blurRadius: 5,
                                       )
                                     ]
@@ -236,21 +216,120 @@ class HomeScreen extends StatelessWidget {
                   child: GridView.count(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 4,
+                    crossAxisCount: 3,
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 15,
-                    childAspectRatio: 0.8,
+                    childAspectRatio: 0.9,
                     children: [
-                      _buildServiceItem(context, Icons.electric_bolt, 'ইলেকট্রিশিয়ান', Colors.orange, onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const UserElectricScreen()));
-                      }),
-                      _buildServiceItem(context, Icons.plumbing, 'প্লাম্বর', Colors.blue),
-                      _buildServiceItem(context, Icons.ac_unit, 'এসি সার্ভিস', Colors.cyan),
-                      _buildServiceItem(context, Icons.restaurant, 'বাবুর্চি', Colors.amber),
-                      _buildServiceItem(context, Icons.kebab_dining, 'কসাই', Colors.red),
-                      _buildServiceItem(context, Icons.format_paint, 'পেইন্টার', Colors.orangeAccent),
-                      _buildServiceItem(context, Icons.menu_book, 'হোম টিউটর', Colors.redAccent),
-                      _buildServiceItem(context, Icons.medical_services, 'অ্যাম্বুলেন্স', Colors.red),
+
+                      _buildServiceItem(
+                        context,
+                        Icons.electric_bolt,
+                        'ইলেকট্রিশিয়ান',
+                        Colors.orange,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserElectricScreen(
+                                serviceType: 'ইলেকট্রিশিয়ান',
+                                pageTitle: 'ইলেকট্রিশিয়ান',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _buildServiceItem(
+                        context,
+                        Icons.plumbing,
+                        'প্লাম্বার',
+                        Colors.blue,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserElectricScreen(
+                                serviceType: 'প্লাম্বার',
+                                pageTitle: 'প্লাম্বার',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _buildServiceItem(
+                        context,
+                        Icons.ac_unit,
+                        'এসি সার্ভিস',
+                        Colors.cyan,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserElectricScreen(
+                                serviceType: 'এসি সার্ভিস',
+                                pageTitle: 'এসি সার্ভিস',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _buildServiceItem(
+                        context,
+                        Icons.restaurant,
+                        'বাবুর্চি',
+                        Colors.amber,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserElectricScreen(
+                                serviceType: 'বাবুর্চি',
+                                pageTitle: 'বাবুর্চি',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _buildServiceItem(
+                        context,
+                        Icons.kebab_dining,
+                        'কসাই',
+                        Colors.red,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserElectricScreen(
+                                serviceType: 'কসাই',
+                                pageTitle: 'কসাই',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _buildServiceItem(
+                        context,
+                        Icons.cleaning_services,
+                        'ক্লিনার',
+                        Colors.orangeAccent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserElectricScreen(
+                                serviceType: 'ক্লিনার',
+                                pageTitle: 'ক্লিনার',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
                     ],
                   ),
                 ),
@@ -258,16 +337,14 @@ class HomeScreen extends StatelessWidget {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: _buildActionCards(isTablet),
+                  child: _buildActionCards(context, currentUser, isTablet),
                 ),
-                const SizedBox(height: 120),
+                const SizedBox(height: 40),
               ],
             ),
           ),
           bottomNavigationBar: BottomAppBar(
             height: 70,
-            notchMargin: 10,
-            shape: const CircularNotchedRectangle(),
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -292,8 +369,6 @@ class HomeScreen extends StatelessWidget {
                     }
                   },
                 ),
-                const SizedBox(width: 40),
-                _buildNavItem(context, Icons.chat_bubble_outline, 'চ্যাট', false),
                 _buildNavItem(
                   context,
                   Icons.person_outline,
@@ -316,14 +391,6 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            backgroundColor: const Color(0xFF0066FF),
-            elevation: 4,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.add, color: Colors.white, size: 32),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         );
       },
     );
@@ -342,7 +409,7 @@ class HomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withAlpha(10), 
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -354,7 +421,7 @@ class HomeScreen extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -363,48 +430,86 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionCards(bool isTablet) {
+  Widget _buildActionCards(BuildContext context, User? currentUser, bool isTablet) {
     return Row(
       children: [
-        Expanded(child: _actionCard("জরুরি সেবা", "৩০-৬০ মিনিটের মধ্যে", const Color(0xFFFFEBEE), Icons.emergency, Colors.red, isTablet)),
+        Expanded(
+          child: _actionCard(
+            "জরুরি সেবা",
+            "৩০-৬০ মিনিটের মধ্যে",
+            const Color(0xFFFFEBEE),
+            Icons.emergency,
+            Colors.red,
+            isTablet,
+            onTap: () {
+              if (currentUser != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const UserEmergencyScreen()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              }
+            },
+          ),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _actionCard("কাস্টমার হেল্পলাইন", "যেকোনো সমস্যায় কল করুন", const Color(0xFFE8F5E9), Icons.support_agent, Colors.green, isTablet)),
+        Expanded(
+          child: _actionCard(
+            "কাস্টমার হেল্পলাইন",
+            "যেকোনো সমস্যায় কল করুন",
+            const Color(0xFFE8F5E9),
+            Icons.support_agent,
+            Colors.green,
+            isTablet,
+            onTap: () {
+              // Add support functionality if needed
+            },
+          ),
+        ),
       ],
     );
   }
 
-  Widget _actionCard(String title, String subtitle, Color bgColor, IconData icon, Color iconColor, bool isTablet) {
-    return Container(
-      padding: EdgeInsets.all(isTablet ? 20 : 16),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-            child: Icon(icon, color: iconColor, size: isTablet ? 24 : 20),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: isTablet ? 16 : 14,
+  Widget _actionCard(String title, String subtitle, Color bgColor, IconData icon, Color iconColor, bool isTablet, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        padding: EdgeInsets.all(isTablet ? 20 : 16),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              child: Icon(icon, color: iconColor, size: isTablet ? 24 : 20),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: isTablet ? 12 : 10,
-              color: Colors.grey.shade700,
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: isTablet ? 16 : 14,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: isTablet ? 12 : 10,
+                color: Colors.grey.shade700,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

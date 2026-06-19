@@ -2,12 +2,23 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user_electric_bookform.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login.dart';
 
 class UserElectricScreen extends StatefulWidget {
-  const UserElectricScreen({super.key});
+
+  final String serviceType;
+  final String pageTitle;
+
+  const UserElectricScreen({
+    super.key,
+    required this.serviceType,
+    required this.pageTitle,
+  });
 
   @override
-  State<UserElectricScreen> createState() => _UserElectricScreenState();
+  State<UserElectricScreen> createState() =>
+      _UserElectricScreenState();
 }
 
 class _UserElectricScreenState extends State<UserElectricScreen> {
@@ -68,8 +79,8 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1B263B)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "ইলেকট্রিশিয়ান",
+        title: Text(
+          widget.pageTitle,
           style: TextStyle(
             color: Color(0xFF1B263B),
             fontWeight: FontWeight.bold,
@@ -127,10 +138,10 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
             ),
           ),
 
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
-              "ইলেকট্রিশিয়ান",
+              widget.pageTitle,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -143,7 +154,7 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
         child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('workers')
-            .where('serviceType', isEqualTo: 'ইলেকট্রিশিয়ান')
+            .where('serviceType', isEqualTo: widget.serviceType,)
             .where('isAvailable', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
@@ -157,11 +168,11 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
 
         if (!snapshot.hasData ||
         snapshot.data!.docs.isEmpty) {
-        return const Center(
-        child: Text(
-        "কোনো ইলেকট্রিশিয়ান পাওয়া যায়নি",
-        ),
-        );
+          return Center(
+            child: Text(
+              "কোনো ${widget.pageTitle} পাওয়া যায়নি",
+            ),
+          );
         }
 
         final workers = snapshot.data!.docs;
@@ -190,17 +201,39 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
     );
   }
 
+  // all worker card
+
   Widget _buildElectricianCard(
       Map<String, dynamic> worker,
       ) {
+
     return GestureDetector(
+      // aunthication check
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => UserElectricBookForm(worker: worker),
-          ),
-        );
+
+        final user = FirebaseAuth.instance.currentUser;
+
+        if (user == null) {
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LoginScreen(),
+            ),
+          );
+
+        } else {
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => UserElectricBookForm(
+                worker: worker,
+              ),
+            ),
+          );
+
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -286,11 +319,7 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
                               color: Colors.blue,
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            "${worker['totalJobs'] ?? 0}",
-                            style: const TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
+
                         ],
                       ),
                       Column(

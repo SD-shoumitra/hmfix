@@ -18,13 +18,68 @@ class _UserElectricBookFormState extends State<UserElectricBookForm> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
 
-  final List<String> _workOptions = [
-    "সুইচ সমস্যা",
-    "লাইট ফিটিং",
-    "ফ্যান ইনস্টল",
-    "সকেট সমস্যা",
-    "অন্যান্য",
-  ];
+  List<String> getWorkOptions() {
+
+    switch (widget.worker['serviceType']) {
+
+      case 'ইলেকট্রিশিয়ান':
+        return [
+          "সুইচ সমস্যা",
+          "লাইট ফিটিং",
+          "ফ্যান ইনস্টল",
+          "সকেট সমস্যা",
+          "অন্যান্য",
+        ];
+
+      case 'প্লাম্বার':
+        return [
+          "পাইপ লিক",
+          "ট্যাপ সমস্যা",
+          "বেসিন ফিটিং",
+          "ড্রেন সমস্যা",
+          "অন্যান্য",
+        ];
+
+      case 'ক্লিনার':
+        return [
+          "বাসা পরিষ্কার",
+          "বাথরুম পরিষ্কার",
+          "কিচেন পরিষ্কার",
+          "অফিস পরিষ্কার",
+          "অন্যান্য",
+        ];
+
+      case 'বাবুর্চি':
+        return [
+          "দৈনিক রান্না",
+          "পার্টি রান্না",
+          "বিয়ে অনুষ্ঠান",
+          "আকিকা",
+          "অন্যান্য",
+        ];
+
+      case 'কসাই':
+        return [
+          "গরু কাটা",
+          "খাসি কাটা",
+          "মাংস প্রসেসিং",
+          "কুরবানী সার্ভিস",
+          "অন্যান্য",
+        ];
+
+      case 'এসি সার্ভিস':
+        return [
+          "এসি ইনস্টল",
+          "এসি সার্ভিসিং",
+          "গ্যাস রিফিল",
+          "এসি রিপেয়ার",
+          "অন্যান্য",
+        ];
+
+      default:
+        return ["অন্যান্য"];
+    }
+  }
 
   @override
   void dispose() {
@@ -46,9 +101,9 @@ class _UserElectricBookFormState extends State<UserElectricBookForm> {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1B263B)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "ইলেকট্রিশিয়ান",
-          style: TextStyle(
+        title: Text(
+          widget.worker['serviceType'] ?? '',
+          style: const TextStyle(
             color: Color(0xFF1B263B),
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -77,7 +132,7 @@ class _UserElectricBookFormState extends State<UserElectricBookForm> {
               ),
             ),
             const SizedBox(height: 8),
-            ..._workOptions.map((option) => RadioListTile<String>(
+            ...getWorkOptions().map((option) => RadioListTile<String>(
                   title: Text(option),
                   value: option,
                   groupValue: _selectedWork,
@@ -101,7 +156,7 @@ class _UserElectricBookFormState extends State<UserElectricBookForm> {
             const SizedBox(height: 24),
             _buildLabel("তারিখ"),
             const SizedBox(height: 8),
-            _buildTextField(_dateController, "তারিখ লিখুন... (যেমন: ২০ মে, ২০২৪)"),
+            _buildTextField(_dateController, "তারিখ লিখুন... (যেমন: ২৩ জুন, ২০২৬)"),
             const SizedBox(height: 24),
             _buildLabel("সময়"),
             const SizedBox(height: 8),

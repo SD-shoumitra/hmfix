@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'worker_amar_kaaj.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'worker_dashboard.dart';
 
 class WorkerRequestsScreen extends StatefulWidget {
   const WorkerRequestsScreen({super.key});
@@ -12,11 +13,6 @@ class WorkerRequestsScreen extends StatefulWidget {
 }
 
 class _WorkerRequestsScreenState extends State<WorkerRequestsScreen> {
-  int _selectedFilterIndex = 0;
-  final List<String> _filters = ["সব"];
-
-
-
   @override
   Widget build(BuildContext context) {
 
@@ -46,7 +42,14 @@ class _WorkerRequestsScreenState extends State<WorkerRequestsScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1B263B)),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const WorkerDashboard(),
+              ),
+            );
+          },
         ),
         title: const Text(
           "নতুন রিকোয়েস্ট",
@@ -57,45 +60,9 @@ class _WorkerRequestsScreenState extends State<WorkerRequestsScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.tune, color: Color(0xFF1B263B)),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [
-          // Filter Tabs
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(_filters.length, (index) {
-                bool isSelected = _selectedFilterIndex == index;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedFilterIndex = index),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF0066FF) : const Color(0xFFF5F7FA),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Text(
-                      _filters[index],
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.grey,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-          
           // Request List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
@@ -105,7 +72,10 @@ class _WorkerRequestsScreenState extends State<WorkerRequestsScreen> {
                 'workerPhone',
                 isEqualTo: workerPhone,
               )
-
+                  .where(
+                'status',
+                whereIn: ['pending', 'accepted'],
+              )
                   .snapshots(),
 
               builder: (context, snapshot) {
@@ -127,10 +97,7 @@ class _WorkerRequestsScreenState extends State<WorkerRequestsScreen> {
                   );
                 }
 
-                final requests = snapshot.data!.docs.where((doc) {
-                  final data = doc.data() as Map<String, dynamic>;
-                  return data['status'] != 'ongoing';
-                }).toList();
+                final requests = snapshot.data!.docs;
 
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -155,12 +122,14 @@ class _WorkerRequestsScreenState extends State<WorkerRequestsScreen> {
     );
   }
 
+  //request card
+
   Widget _buildRequestCard(
       Map<String, dynamic> request,
       String requestId,
       ){
 
-         final status = request['status'] ?? 'pending';
+    final status = request['status'] ?? 'pending';
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -196,15 +165,7 @@ class _WorkerRequestsScreenState extends State<WorkerRequestsScreen> {
                   ),
                 ),
               ),
-              const Icon(Icons.star, color: Colors.blue, size: 18),
-              const SizedBox(width: 4),
-              Text(
-                "${request['rating'] ?? 0}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
+
             ],
           ),
           const SizedBox(height: 16),
