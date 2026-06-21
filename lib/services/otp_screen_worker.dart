@@ -11,6 +11,8 @@ class WorkerOTPScreen extends StatefulWidget {
   final String password;
   final String serviceType;
   final String experience;
+  final String district;
+  final String districtEn;
   final String email;
   final String address;
   final int serviceCharge;
@@ -23,6 +25,8 @@ class WorkerOTPScreen extends StatefulWidget {
     required this.password,
     required this.serviceType,
     required this.experience,
+    required this.district,
+    required this.districtEn,
     required this.email,
     required this.address,
     required this.serviceCharge,
@@ -119,6 +123,8 @@ class _WorkerOTPScreenState extends State<WorkerOTPScreen> {
 
         "serviceType": widget.serviceType,
         "experience": widget.experience,
+        "district": widget.district,
+        "districtEn": widget.districtEn,
 
         "address": widget.address,
         "serviceCharge": widget.serviceCharge,

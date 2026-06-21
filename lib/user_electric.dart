@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user_electric_bookform.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'login.dart';
+import 'home_screen.dart';
 
 class UserElectricScreen extends StatefulWidget {
 
@@ -25,6 +26,8 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
   late Timer _timer;
   String _currentTime = "";
   String _currentDate = "";
+  String searchDistrict = "";
+
 
   @override
   void initState() {
@@ -137,6 +140,7 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               widget.pageTitle,
+
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -145,8 +149,28 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
             ),
           ),
 
-    Expanded(
-        child: StreamBuilder<QuerySnapshot>(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  searchDistrict = value.toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "জেলা লিখে সার্চ করুন",
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('workers')
             .where('serviceType', isEqualTo: widget.serviceType,)
@@ -172,16 +196,30 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
 
         final workers = snapshot.data!.docs;
 
+        final filteredWorkers = workers.where((doc) {
+          final worker = doc.data() as Map<String, dynamic>;
+
+          final districtBn =
+          (worker['district'] ?? '').toString().toLowerCase();
+
+          final districtEn =
+          (worker['districtEn'] ?? '').toString().toLowerCase();
+
+          return searchDistrict.isEmpty ||
+              districtBn.contains(searchDistrict) ||
+              districtEn.contains(searchDistrict);
+        }).toList();
+
         return ListView.builder(
         padding: const EdgeInsets.symmetric(
         horizontal: 16,
         ),
-        itemCount: workers.length,
-        itemBuilder: (context, index) {
+          itemCount: filteredWorkers.length,
+          itemBuilder: (context, index) {
 
-        final worker =
-        workers[index].data()
-        as Map<String, dynamic>;
+            final worker =
+            filteredWorkers[index].data()
+            as Map<String, dynamic>;
 
         return _buildElectricianCard(
         worker,
@@ -296,8 +334,11 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
                     ],
                   ),
                   Text(
-                    worker['serviceType'] ?? "",
-                    style: const TextStyle(color: Colors.grey, fontSize: 13),
+                    "${worker['serviceType'] ?? ''} - ${worker['district'] ?? ''}",
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Row(

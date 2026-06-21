@@ -24,6 +24,81 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
 
   String? selectedService;
   String? selectedExperience;
+  String? selectedDistrict;
+  String? selectedDistrictEn;
+  final List<Map<String, String>> districts = [
+    {"bn": "ঢাকা", "en": "dhaka"},
+    {"bn": "গাজীপুর", "en": "gazipur"},
+    {"bn": "নারায়ণগঞ্জ", "en": "narayanganj"},
+    {"bn": "নরসিংদী", "en": "narsingdi"},
+    {"bn": "মানিকগঞ্জ", "en": "manikganj"},
+    {"bn": "মুন্সিগঞ্জ", "en": "munshiganj"},
+    {"bn": "রাজবাড়ী", "en": "rajbari"},
+    {"bn": "ফরিদপুর", "en": "faridpur"},
+    {"bn": "গোপালগঞ্জ", "en": "gopalganj"},
+    {"bn": "মাদারীপুর", "en": "madaripur"},
+    {"bn": "শরীয়তপুর", "en": "shariatpur"},
+    {"bn": "কিশোরগঞ্জ", "en": "kishoreganj"},
+    {"bn": "টাঙ্গাইল", "en": "tangail"},
+
+    {"bn": "চট্টগ্রাম", "en": "chattogram"},
+    {"bn": "কক্সবাজার", "en": "coxsbazar"},
+    {"bn": "কুমিল্লা", "en": "cumilla"},
+    {"bn": "ফেনী", "en": "feni"},
+    {"bn": "নোয়াখালী", "en": "noakhali"},
+    {"bn": "লক্ষ্মীপুর", "en": "lakshmipur"},
+    {"bn": "ব্রাহ্মণবাড়িয়া", "en": "brahmanbaria"},
+    {"bn": "চাঁদপুর", "en": "chandpur"},
+    {"bn": "খাগড়াছড়ি", "en": "khagrachari"},
+    {"bn": "রাঙ্গামাটি", "en": "rangamati"},
+    {"bn": "বান্দরবান", "en": "bandarban"},
+
+    {"bn": "সিলেট", "en": "sylhet"},
+    {"bn": "মৌলভীবাজার", "en": "moulvibazar"},
+    {"bn": "হবিগঞ্জ", "en": "habiganj"},
+    {"bn": "সুনামগঞ্জ", "en": "sunamganj"},
+
+    {"bn": "রাজশাহী", "en": "rajshahi"},
+    {"bn": "নাটোর", "en": "natore"},
+    {"bn": "নওগাঁ", "en": "naogaon"},
+    {"bn": "চাঁপাইনবাবগঞ্জ", "en": "chapainawabganj"},
+    {"bn": "পাবনা", "en": "pabna"},
+    {"bn": "সিরাজগঞ্জ", "en": "sirajganj"},
+    {"bn": "বগুড়া", "en": "bogura"},
+    {"bn": "জয়পুরহাট", "en": "joypurhat"},
+
+    {"bn": "খুলনা", "en": "khulna"},
+    {"bn": "যশোর", "en": "jashore"},
+    {"bn": "সাতক্ষীরা", "en": "satkhira"},
+    {"bn": "বাগেরহাট", "en": "bagerhat"},
+    {"bn": "কুষ্টিয়া", "en": "kushtia"},
+    {"bn": "ঝিনাইদহ", "en": "jhenaidah"},
+    {"bn": "মাগুরা", "en": "magura"},
+    {"bn": "মেহেরপুর", "en": "meherpur"},
+    {"bn": "নড়াইল", "en": "narail"},
+    {"bn": "চুয়াডাঙ্গা", "en": "chuadanga"},
+
+    {"bn": "বরিশাল", "en": "barishal"},
+    {"bn": "ভোলা", "en": "bhola"},
+    {"bn": "পটুয়াখালী", "en": "patuakhali"},
+    {"bn": "পিরোজপুর", "en": "pirojpur"},
+    {"bn": "ঝালকাঠি", "en": "jhalokathi"},
+    {"bn": "বরগুনা", "en": "barguna"},
+
+    {"bn": "রংপুর", "en": "rangpur"},
+    {"bn": "দিনাজপুর", "en": "dinajpur"},
+    {"bn": "ঠাকুরগাঁও", "en": "thakurgaon"},
+    {"bn": "পঞ্চগড়", "en": "panchagarh"},
+    {"bn": "কুড়িগ্রাম", "en": "kurigram"},
+    {"bn": "লালমনিরহাট", "en": "lalmonirhat"},
+    {"bn": "গাইবান্ধা", "en": "gaibandha"},
+    {"bn": "নীলফামারী", "en": "nilphamari"},
+
+    {"bn": "ময়মনসিংহ", "en": "mymensingh"},
+    {"bn": "জামালপুর", "en": "jamalpur"},
+    {"bn": "শেরপুর", "en": "sherpur"},
+    {"bn": "নেত্রকোণা", "en": "netrokona"},
+  ];
 
   final List<Map<String, dynamic>> services = [
     {'name': 'ইলেকট্রিশিয়ান', 'icon': Icons.electric_bolt, 'color': Colors.orange},
@@ -169,6 +244,18 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                       onTap: () => _showExperiencePicker(),
                       isSelected: selectedExperience != null,
                     ),
+
+                    _buildDivider(),
+
+                    _buildDropdownField(
+                      label: 'জেলা',
+                      hint: selectedDistrict ?? 'জেলা নির্বাচন করুন',
+                      icon: Icons.location_city,
+                      onTap: () => _showDistrictPicker(),
+                      isSelected: selectedDistrict != null,
+
+                    ),
+
                     _buildDivider(),
                     _buildInputField(
                       controller: _passwordController,
@@ -251,6 +338,14 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                       );
                       return;
                     }
+                    if (selectedDistrict == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("জেলা নির্বাচন করুন"),
+                        ),
+                      );
+                      return;
+                    }
 
                     if (_passwordController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -326,6 +421,8 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                               password: _passwordController.text,
                               serviceType: selectedService ?? "",
                               experience: selectedExperience ?? "",
+                              district: selectedDistrict ?? "",
+                              districtEn: selectedDistrictEn ?? "",
                               email: _emailController.text.trim(),
                               address: _addressController.text.trim(),
                               serviceCharge: int.tryParse(_serviceChargeController.text.trim(),
@@ -469,7 +566,41 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
     );
   }
 
+  void _showDistrictPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
+      ),
+      builder: (context) {
+        return ListView.builder(
+          itemCount: districts.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(
+                districts[index]['bn']!,
+              ),
+              onTap: () {
+                setState(() {
+                  selectedDistrict =
+                  districts[index]['bn'];
+                  selectedDistrictEn = districts[index]['en'];
+                });
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _showExperiencePicker() {
+
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,

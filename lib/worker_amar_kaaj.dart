@@ -58,7 +58,7 @@ class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
       ),
       body: Column(
         children: [
-          // Filter Bar
+
           Container(
             height: 65,
             decoration: BoxDecoration(
@@ -110,7 +110,7 @@ class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
             ),
           ),
           
-          // Jobs List
+          // Job list
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _getJobsStream(workerPhone),

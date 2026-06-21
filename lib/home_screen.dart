@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
     String dayName = dayNames[now.weekday - 1];
     String monthName = monthNames[now.month - 1];
     
-    // Simple digit conversion to Bangla
+    // digit convert to Bangla
     String day = now.day.toString().replaceAll('0', '০').replaceAll('1', '১').replaceAll('2', '২').replaceAll('3', '৩').replaceAll('4', '৪').replaceAll('5', '৫').replaceAll('6', '৬').replaceAll('7', '৭').replaceAll('8', '৮').replaceAll('9', '৯');
     String year = now.year.toString().replaceAll('0', '০').replaceAll('1', '১').replaceAll('2', '২').replaceAll('3', '৩').replaceAll('4', '৪').replaceAll('5', '৫').replaceAll('6', '৬').replaceAll('7', '৭').replaceAll('8', '৮').replaceAll('9', '৯');
 
@@ -41,14 +41,14 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF3F7FF),
           appBar: AppBar(
-            toolbarHeight: 95, // AppBar এর উচ্চতা বাড়ানো হলো
+            toolbarHeight: 95,
             backgroundColor: bgColor,
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             automaticallyImplyLeading: false, 
             centerTitle: false,
             title: Padding(
-              padding: const EdgeInsets.only(top: 25.0, left: 4.0), // লোগো এবং নাম নিচে নামানো হলো
+              padding: const EdgeInsets.only(top: 25.0, left: 4.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
