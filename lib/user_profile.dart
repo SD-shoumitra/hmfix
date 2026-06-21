@@ -134,28 +134,13 @@ class UserProfileScreen extends StatelessWidget {
                           color: Color(0xFF0066FF),
                         ),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF0066FF),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                      ),
+
                     ],
                   ),
                 ),
                 const SizedBox(height: 15),
                 Text(
-                  userData['name'] ?? 'ব্যবহারকারী',
+                  userData['name'] ?? '',
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -190,6 +175,11 @@ class UserProfileScreen extends StatelessWidget {
                         icon: Icons.email_outlined,
                         label: 'ইমেইল',
                         value: userData['email'] ?? (userData['phone'] != null ? "${userData['phone']}@hmfix.com" : 'দেওয়া হয়নি'),
+                      ),
+                      _buildInfoTile(
+                        icon: Icons.location_on_outlined,
+                        label: 'ঠিকানা',
+                        value: userData['address'] ?? 'দেওয়া হয়নি',
                       ),
                       _buildInfoTile(
                         icon: Icons.badge_outlined,

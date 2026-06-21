@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'services/otp_screen.dart';
-
+import 'package:flutter/services.dart';
 
 class UserRegistrationScreen extends StatefulWidget {
   const UserRegistrationScreen({super.key});
@@ -16,6 +16,8 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
   bool _isObscureConfirm = true;
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
@@ -23,6 +25,8 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
   void dispose() {
     _phoneController.dispose();
     _nameController.dispose();
+    _emailController.dispose();
+    _addressController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -30,6 +34,10 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -42,22 +50,24 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: width * 0.06,
+          ),
           child: Column(
             children: [
-              const Text(
+               Text(
                 'নতুন অ্যাকাউন্ট তৈরি করুন',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: width * 0.065,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E1E1E),
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'অ্যাপ ব্যবহার শুরু করুন',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: width * 0.035,
                   color: Colors.grey,
                 ),
               ),
@@ -65,11 +75,11 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
               Center(
                 child: Image.asset(
                   'image/register_hero.png',
-                  height: 220,
+                  height: height * 0.25,
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: height * 0.02),
 
               Container(
                 decoration: BoxDecoration(
@@ -84,6 +94,11 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                       label: 'নাম',
                       hint: 'আপনার নাম দিন',
                       icon: Icons.person_outline,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[a-zA-Z\u0980-\u09FF ]'),
+                        ),
+                      ],
                     ),
                     _buildDivider(),
                     _buildInputField(
@@ -95,10 +110,18 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                     ),
                     _buildDivider(),
                     _buildInputField(
-                      label: 'ইমেইল (ঐচ্ছিক)',
+                      controller: _emailController,
+                      label: 'ইমেইল',
                       hint: 'আপনার ইমেইল দিন',
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
+                    ),
+                    _buildDivider(),
+                    _buildInputField(
+                      controller: _addressController,
+                      label: 'ঠিকানা',
+                      hint: 'আপনার ঠিকানা দিন',
+                      icon: Icons.location_on_outlined,
                     ),
                     _buildDivider(),
                     _buildInputField(
@@ -131,14 +154,50 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: height * 0.03),
               
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: height * 0.07,
                 child: ElevatedButton(
+                  // validation check
                   onPressed: () async {
                     String phone = _phoneController.text.trim();
+
+                    String email = _emailController.text.trim();
+
+                    String name = _nameController.text.trim();
+
+                    if (name.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("নাম দিন")),
+                      );
+                      return;
+                    }
+
+                    if (email.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("ইমেইল দিন")),
+                      );
+                      return;
+                    }
+
+                    bool isValidEmail = RegExp(
+                      r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$',
+                    ).hasMatch(email);
+
+                    if (!isValidEmail) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("সঠিক ইমেইল দিন")),
+                      );
+                      return;
+                    }
+                    if (_addressController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("ঠিকানা দিন")),
+                      );
+                      return;
+                    }
                     if (phone.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("অনুগ্রহ করে মোবাইল নাম্বার দিন")),
@@ -154,6 +213,13 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                     if (_passwordController.text != _confirmPasswordController.text) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("পাসওয়ার্ড মেলেনি")),
+                      );
+                      return;
+                    }
+
+                    if (_passwordController.text.length < 8) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে")),
                       );
                       return;
                     }
@@ -203,7 +269,9 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                               userName: _nameController.text,
                               password: _passwordController.text,
                               role: "user",
-                            ),
+                              email: _emailController.text.trim(),
+                              address: _addressController.text.trim(),
+                            )
                           ),
                         );
                       },
@@ -218,9 +286,9 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
+                  child: Text(
                     'রেজিস্টার করুন',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: width * 0.045, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -248,7 +316,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: height * 0.03),
             ],
           ),
         ),
@@ -270,6 +338,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
     required String hint,
     required IconData icon,
     TextEditingController? controller,
+    List<TextInputFormatter>? inputFormatters,
     bool isPassword = false,
     bool isObscured = false,
     VoidCallback? onToggleVisibility,
@@ -303,6 +372,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                 ),
                 TextField(
                   controller: controller,
+                  inputFormatters: inputFormatters,
                   obscureText: isObscured,
                   keyboardType: keyboardType,
                   style: const TextStyle(fontSize: 15, color: Colors.black),

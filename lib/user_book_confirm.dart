@@ -211,7 +211,16 @@ class UserBookConfirm extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => UserOrderTracking(worker: worker),
+                          builder: (context) => UserOrderTracking(
+                            worker: {
+                              ...worker,
+                              "workerName": worker['name'],
+                              "workType": workType,
+                              "date": date,
+                              "time": time,
+                              "status": "pending",
+                            },
+                          ),
                         ),
                       );
                     },

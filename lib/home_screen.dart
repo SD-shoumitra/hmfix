@@ -5,6 +5,7 @@ import 'user_profile.dart';
 import 'user_electric.dart';
 import 'user_booking_status.dart';
 import 'user_emergency.dart';
+import 'user_customer_helpline.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -466,7 +467,17 @@ class HomeScreen extends StatelessWidget {
             Colors.green,
             isTablet,
             onTap: () {
-              // Add support functionality if needed
+              if (currentUser != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const UserCustomerHelplineScreen()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              }
             },
           ),
         ),

@@ -40,13 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // ১. Firebase Auth দিয়ে লগইন করা
+      // Firebase Auth
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: "${_phoneController.text}@hmfix.com",
         password: _passwordController.text,
       );
 
-      // ২. লগইন সফল হলে ডাটাবেজ থেকে রোল চেক করা (ফোন নাম্বার ব্যবহার করে)
+      // log in er smy database theke check
       String collectionName = isUserSelected ? "users" : "workers";
 
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     } on FirebaseAuthException catch (e) {
       setState(() => _isLoading = false);
-      debugPrint("Auth Error: ${e.code}"); // ডিবাগিং এর জন্য
+      debugPrint("Auth Error: ${e.code}"); // for debug
       
       String errorMessage = "লগইন ব্যর্থ হয়েছে";
       if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
@@ -128,20 +128,27 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: width * 0.06,
+          ),
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              SizedBox(height: height * 0.05),
               Center(
                 child: Container(
-                  height: 130,
-                  width: 130,
+                  height: width * 0.30,
+                  width: width * 0.30,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -164,19 +171,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              const Text(
+              Text(
                 'স্বাগতম!',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: width * 0.07,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E1E1E),
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'আপনার অ্যাকাউন্ট লগইন করুন',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: width * 0.035,
                   color: Colors.grey,
                 ),
               ),
@@ -320,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Login Button
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: height * 0.07,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
@@ -337,34 +344,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: 24,
                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                         )
-                      : const Text(
+                      : Text(
                           'লগইন করুন',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: width * 0.045, fontWeight: FontWeight.bold),
                         ),
                 ),
-              ),
-              const SizedBox(height: 30),
-
-              Row(
-                children: [
-                  Expanded(child: Divider(color: Colors.grey.shade300)),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('অথবা', style: TextStyle(color: Colors.grey)),
-                  ),
-                  Expanded(child: Divider(color: Colors.grey.shade300)),
-                ],
-              ),
-              const SizedBox(height: 30),
-
-              _socialButton(
-                'গুগল দিয়ে চালিয়ে যান',
-                'https://img.icons8.com/color/48/google-logo.png',
-              ),
-              const SizedBox(height: 16),
-              _socialButton(
-                'ফেসবুক দিয়ে চালিয়ে যান',
-                'https://img.icons8.com/color/48/facebook-new.png',
               ),
 
               const SizedBox(height: 40),
@@ -394,55 +378,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _socialButton(String label, String iconUrl) {
-    return Container(
-      width: double.infinity,
-      height: 56,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: InkWell(
-        onTap: () {},
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.network(
-                iconUrl,
-                height: 24,
-                width: 24,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    label.contains('গুগল') ? Icons.g_mobiledata : Icons.facebook,
-                    size: 24,
-                    color: label.contains('গুগল') ? Colors.red : Colors.blue,
-                  );
-                },
-              ),
-              const SizedBox(width: 12),
-              Flexible(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
             ],
           ),
         ),

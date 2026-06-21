@@ -45,7 +45,7 @@ class UserOrderTracking extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    "সার্ভিস: ${worker['workType'] ?? ''}",
+                    "সার্ভিস: ${worker['serviceType'] ?? worker['workType'] ?? ''}",
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -81,7 +81,7 @@ class UserOrderTracking extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          worker['workerName'] ?? "কর্মী",
+                          worker['workerName'] ?? "",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -89,7 +89,7 @@ class UserOrderTracking extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          worker['serviceType'] ?? "ইলেকট্রিশিয়ান",
+                          worker['serviceType'] ?? "",
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -101,17 +101,13 @@ class UserOrderTracking extends StatelessWidget {
                             const Icon(Icons.star, color: Color(0xFF0066FF), size: 16),
                             const SizedBox(width: 4),
                             Text(
-                              "${worker['rating'] ?? 4.8}",
+                              "${worker['workerRating'] ?? worker['rating'] ?? 0}",
                               style: const TextStyle(
                                 color: Color(0xFF0066FF),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            const Text(
-                              "(120+)",
-                              style: TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
+
                           ],
                         ),
                       ],

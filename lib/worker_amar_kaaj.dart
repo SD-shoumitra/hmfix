@@ -123,6 +123,12 @@ class _WorkerMyJobsScreenState extends State<WorkerMyJobsScreen> {
                 }
 
                 final jobs = snapshot.data!.docs;
+                // time anuji sort kora kaj gula
+                jobs.sort((a, b) {
+                  Timestamp ta = a['createdAt'] ?? Timestamp.now();
+                  Timestamp tb = b['createdAt'] ?? Timestamp.now();
+                  return tb.compareTo(ta);
+                });
 
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),

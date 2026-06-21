@@ -231,6 +231,7 @@ class _UserElectricBookFormState extends State<UserElectricBookForm> {
                         .add({
                       'workerName': widget.worker['name'],
                       'workerPhone': widget.worker['phone'],
+                      'workerRating': widget.worker['rating'] ?? 0,
 
                       'serviceType': widget.worker['serviceType'],
                       'serviceCharge': widget.worker['serviceCharge'],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'services/otp_screen_worker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class WorkerRegistrationScreen extends StatefulWidget {
   const WorkerRegistrationScreen({super.key});
@@ -55,6 +56,10 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -67,22 +72,24 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: width * 0.06,
+          ),
           child: Column(
             children: [
-              const Text(
+              Text(
                 'নতুন অ্যাকাউন্ট তৈরি করুন',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: width * 0.065,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E1E1E),
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'আমাদের সার্ভিস নেটওয়ার্কে যুক্ত হোন',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: width * 0.035,
                   color: Colors.grey,
                 ),
               ),
@@ -90,7 +97,7 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
               Center(
                 child: Image.asset(
                   'image/worker_register_hero.png',
-                  height: 220,
+                  height: height * 0.25,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -109,6 +116,11 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                       label: 'নাম',
                       hint: 'আপনার নাম দিন',
                       icon: Icons.person_outline,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[a-zA-Z\u0980-\u09FF ]'),
+                        ),
+                      ],
                     ),
                     _buildDivider(),
                     _buildInputField(
@@ -184,13 +196,21 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
 
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: height * 0.07,
                 child: ElevatedButton(
+                  //validation check
                   onPressed: () async {
 
                     String phone = _phoneController.text.trim();
 
                     String email = _emailController.text.trim();
+
+                    if (_nameController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("নাম দিন")),
+                      );
+                      return;
+                    }
 
                     if (email.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -260,7 +280,7 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                       return;
                     }
 
-                    // চেক করা হচ্ছে নাম্বারটি আগে থেকে আছে কি না
+                    // checking number before number register
                     var workerDoc = await FirebaseFirestore.instance
                         .collection('workers')
                         .doc(phone)
@@ -276,8 +296,8 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context); // ডায়ালগ বন্ধ
-                                Navigator.pop(context); // লগইন স্ক্রিনে ফেরত যাওয়া
+                                Navigator.pop(context); //
+                                Navigator.pop(context); // back log in screen
                               },
                               child: const Text("লগইন করুন"),
                             ),
@@ -308,8 +328,7 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                               experience: selectedExperience ?? "",
                               email: _emailController.text.trim(),
                               address: _addressController.text.trim(),
-                              serviceCharge: int.tryParse(
-                                _serviceChargeController.text.trim(),
+                              serviceCharge: int.tryParse(_serviceChargeController.text.trim(),
                               ) ??
                                   0,
                             ),
@@ -344,18 +363,18 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                   ),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Text(
+                    child: Text(
                       'লগইন করুন',
                       style: TextStyle(
                         color: Color(0xFF0066FF),
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: width * 0.035,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: height * 0.03),
             ],
           ),
         ),
@@ -384,7 +403,9 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
               const Text(
                 'আপনার সার্ভিসের ধরন বেছে নিন',
                 style: TextStyle(
@@ -512,6 +533,8 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
     required String hint,
     required IconData icon,
     TextEditingController? controller,
+    List<TextInputFormatter>? inputFormatters,
+
     bool isPassword = false,
     bool isObscured = false,
     VoidCallback? onToggleVisibility,
@@ -547,6 +570,7 @@ class _WorkerRegistrationScreenState extends State<WorkerRegistrationScreen> {
                   controller: controller,
                   obscureText: isObscured,
                   keyboardType: keyboardType,
+                  inputFormatters: inputFormatters,
                   style: const TextStyle(fontSize: 15, color: Colors.black),
                   decoration: InputDecoration(
                     hintText: hint,

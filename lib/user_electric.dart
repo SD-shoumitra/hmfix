@@ -88,12 +88,7 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.tune, color: Color(0xFF1B263B)),
-            onPressed: () {},
-          ),
-        ],
+
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

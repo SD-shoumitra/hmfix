@@ -219,6 +219,12 @@ class _UserBookingStatusScreenState extends State<UserBookingStatusScreen> {
                 }
 
                 final bookings = snapshot.data!.docs;
+                bookings.sort((a, b) {
+                  Timestamp ta = a['createdAt'] ?? Timestamp.now();
+                  Timestamp tb = b['createdAt'] ?? Timestamp.now();
+                  return tb.compareTo(ta);
+                });
+
 
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -252,7 +258,8 @@ class _UserBookingStatusScreenState extends State<UserBookingStatusScreen> {
       query = query.where('status', isEqualTo: 'rejected');
     }
 
-    return query.snapshots();
+    return query
+        .snapshots();
   }
 
   Widget _buildBookingCard(
@@ -292,16 +299,11 @@ class _UserBookingStatusScreenState extends State<UserBookingStatusScreen> {
 
     return GestureDetector(
       onTap: () {
-        // Mocking worker data for tracking screen as it expects it
-        final workerData = {
-          'name': booking['workerName'] ?? 'কর্মী',
-          'serviceType': booking['serviceType'] ?? '',
-          'rating': 4.8,
-        };
+
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UserOrderTracking(worker: workerData),
+            builder: (context) => UserOrderTracking(worker: booking),
           ),
         );
       },

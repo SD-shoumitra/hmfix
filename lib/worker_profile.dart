@@ -12,7 +12,7 @@ class WorkerProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
-    // ইউজার থেকে ফোন নাম্বার বের করার লজিক
+    // user to phon number er nihom
     String? userPhone;
     if (user != null) {
       if (user.email != null && user.email!.contains('@hmfix.com')) {
@@ -117,30 +117,12 @@ class WorkerProfileScreen extends StatelessWidget {
                               child: Icon(Icons.person, size: 65, color: Color(0xFF0066FF)),
                             ),
                           ),
-                          Positioned(
-                            bottom: 5,
-                            right: 5,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.grey.shade300),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(Icons.camera_alt_outlined, size: 20, color: Colors.grey),
-                            ),
-                          ),
+
                         ],
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        userData['name'] ?? 'রাকিব হাসান',
+                        userData['name'] ?? '',
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -149,7 +131,7 @@ class WorkerProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        userData['phone'] ?? '01712-345678',
+                        userData['phone'] ?? '',
                         style: const TextStyle(fontSize: 15, color: Colors.grey),
                       ),
                       const SizedBox(height: 12),
@@ -235,15 +217,12 @@ class WorkerProfileScreen extends StatelessWidget {
                       _buildInfoRow(
                         icon: Icons.star_outline,
                         label: 'গড় রেটিং',
-                        value: "${userData['rating'] ?? 0.0}",
+                        value: ((userData['rating'] ?? 0.0) as num)
+                            .toDouble()
+                            .toStringAsFixed(1),
                         isRating: true,
                       ),
-                      _buildDivider(),
-                      _buildInfoRow(
-                        icon: Icons.assignment_turned_in_outlined,
-                        label: 'মোট কাজ',
-                        value: "${userData['totalJobs'] ?? 0} টি",
-                      ),
+
                       _buildDivider(),
                       _buildInfoRow(
                         icon: Icons.calendar_month_outlined,

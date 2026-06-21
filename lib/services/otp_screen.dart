@@ -10,12 +10,16 @@ class OTPScreen extends StatefulWidget {
   final String userName;
   final String role;
   final String password;
-
+  final String email;
+  final String address;
+// constructor
   const OTPScreen({
     super.key,
     required this.phoneNumber,
     required this.verificationId,
     required this.userName,
+    required this.email,
+    required this.address,
     this.role = "user",
     this.password = "",
   });
@@ -98,7 +102,7 @@ class _OTPScreenState extends State<OTPScreen> {
         }
       }
 
-      // ৩. ডাটাবেজে তথ্য সেভ করা
+      // firestore save
       await FirebaseFirestore.instance
           .collection("users")
           .doc(widget.phoneNumber)
@@ -106,9 +110,9 @@ class _OTPScreenState extends State<OTPScreen> {
         "uid": userCredential.user!.uid,
         "name": widget.userName,
         "phone": widget.phoneNumber,
-        "email": "${widget.phoneNumber}@hmfix.com",
-        "password": widget.password,
+        "email": widget.email,
         "role": widget.role,
+        "address": widget.address,
         "createdAt": Timestamp.now(),
       }, SetOptions(merge: true));
 
@@ -130,6 +134,9 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -142,14 +149,16 @@ class _OTPScreenState extends State<OTPScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: width * 0.06,
+          ),
           child: Column(
             children: [
               const SizedBox(height: 20),
               Center(
                 child: Container(
-                  height: 120,
-                  width: 120,
+                  height: width * 0.30,
+                  width: width * 0.30,
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8F0FE),
                     borderRadius: BorderRadius.circular(30),
@@ -158,9 +167,9 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
+              Text(
                 'OTP ভেরিফিকেশন',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1E1E1E)),
+                style: TextStyle( fontSize: width * 0.06, fontWeight: FontWeight.bold, color: Color(0xFF1E1E1E)),
               ),
               const SizedBox(height: 12),
               RichText(
@@ -181,8 +190,8 @@ class _OTPScreenState extends State<OTPScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(6, (index) {
                   return Container(
-                    width: 48,
-                    height: 58,
+                    width: width * 0.12,
+                    height: width * 0.14,
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
@@ -229,7 +238,7 @@ class _OTPScreenState extends State<OTPScreen> {
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: height * 0.07,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _verifyOTP,
                   style: ElevatedButton.styleFrom(
@@ -240,7 +249,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   ),
                   child: _isLoading
                       ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                      : const Text('ভেরিফাই এবং এগিয়ে যান', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      : Text('ভেরিফাই এবং এগিয়ে যান', style: TextStyle(fontSize: width * 0.04, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 32),
