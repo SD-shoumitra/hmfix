@@ -84,7 +84,7 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
 
               return Column(
                 children: [
-                  // Fixed Header
+                  // fixed head
                   Container(
                     padding: const EdgeInsets.only(
                         top: 70, left: 24, right: 24, bottom: 40),
@@ -177,7 +177,7 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
                     ),
                   ),
 
-                  // Scrollable Body
+                  // scrolling er jinis
                   Expanded(
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
@@ -186,7 +186,7 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
                         children: [
                           const SizedBox(height: 30),
 
-                          // Today's Summary
+                          // sarsonkep
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
@@ -264,7 +264,7 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
 
                           const SizedBox(height: 30),
 
-                          // Quick Actions
+                          // drutho action
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
@@ -318,7 +318,7 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
 
                           const SizedBox(height: 30),
 
-                          // Interest Toggle
+                          // toggle
                           Container(
                             margin: const EdgeInsets.symmetric(horizontal: 20),
                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

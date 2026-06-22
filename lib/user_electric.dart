@@ -33,7 +33,7 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
   void initState() {
     super.initState();
     _updateTime();
-    // প্রতি মিনিটে বা সেকেন্ডে সময় আপডেট করার জন্য টাইমার
+
     _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
       _updateTime();
     });
@@ -48,13 +48,13 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
   void _updateTime() {
     final now = DateTime.now();
     
-    // Formatting Time (English, 12-hour format, AM/PM, no seconds)
+    // Formatting Time
     int hour = now.hour % 12;
     if (hour == 0) hour = 12;
     String minute = now.minute.toString().padLeft(2, '0');
     String period = now.hour >= 12 ? "PM" : "AM";
     
-    // Formatting Date (English format)
+    // Formatting Date
     List<String> months = [
       'January', 'February', 'March', 'April', 'May', 'June', 
       'July', 'August', 'September', 'October', 'November', 'December'
@@ -96,7 +96,7 @@ class _UserElectricScreenState extends State<UserElectricScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Real-time Time and Date Bar
+          // realtime Time and Date
           Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

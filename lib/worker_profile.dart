@@ -294,7 +294,7 @@ class WorkerProfileScreen extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // Logout Button
+                // logout buttom
                 SizedBox(
                   width: double.infinity,
                   height: 56,

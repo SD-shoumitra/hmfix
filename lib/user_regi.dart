@@ -224,7 +224,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                       return;
                     }
 
-                    // চেক করা হচ্ছে নাম্বারটি আগে থেকে আছে কি না
+                   // number checck before this number register
                     var userDoc = await FirebaseFirestore.instance
                         .collection('users')
                         .doc(phone)
@@ -240,8 +240,8 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context); // ডায়ালগ বন্ধ
-                                Navigator.pop(context); // লগইন স্ক্রিনে ফেরত যাওয়া
+                                Navigator.pop(context);
+                                Navigator.pop(context);
                               },
                               child: const Text("লগইন করুন"),
                             ),

@@ -38,7 +38,7 @@ class UserProfileScreen extends StatelessWidget {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
-            .doc(userPhone) // UID এর বদলে ফোন নাম্বার দিয়ে তথ্য খোঁজা হচ্ছে
+            .doc(userPhone)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -109,7 +109,7 @@ class UserProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                // Profile Header
+
                 Center(
                   child: Stack(
                     children: [
@@ -156,7 +156,7 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
 
-                // Info Cards
+                // information card
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
@@ -192,7 +192,7 @@ class UserProfileScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
                 
-                // Logout Button
+                // logout Buttom
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: SizedBox(

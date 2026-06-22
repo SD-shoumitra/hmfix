@@ -214,6 +214,7 @@ class _UserElectricBookFormState extends State<UserElectricBookForm> {
                   }
 
                   try {
+
                     final user = FirebaseAuth.instance.currentUser;
 
                     final phone =

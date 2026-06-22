@@ -32,6 +32,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     const Color bgColor = Colors.white;
     bool isTablet = MediaQuery.of(context).size.width > 600;
+    // data collect to fire base
 
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),

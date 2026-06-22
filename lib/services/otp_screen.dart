@@ -86,10 +86,10 @@ class _OTPScreenState extends State<OTPScreen> {
         smsCode: otp,
       );
 
-      // ১. ফোন নাম্বার দিয়ে সাইন ইন (OTP ভেরিফাই)
+
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // ২. ইমেইল/পাসওয়ার্ড লিঙ্ক করা
+
       if (widget.password.isNotEmpty) {
         try {
           AuthCredential emailAuth = EmailAuthProvider.credential(
