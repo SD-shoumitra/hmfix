@@ -9,6 +9,7 @@ class WorkerDashboard extends StatefulWidget {
   const WorkerDashboard({super.key});
 
   @override
+  // method
   State<WorkerDashboard> createState() => _WorkerDashboardState();
 }
 
@@ -35,6 +36,7 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
             .doc(userPhone)
             .snapshots(),
         builder: (context, snapshot) {
+          // firestore a data store
           String name = "";
           String profession = "";
           bool isOnline = true;

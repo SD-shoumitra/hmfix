@@ -217,8 +217,21 @@ class _UserElectricBookFormState extends State<UserElectricBookForm> {
 
                     final user = FirebaseAuth.instance.currentUser;
 
-                    final phone =
-                    user!.phoneNumber!.replaceAll('+88', '');
+                    String phone = "";
+
+                    if (user!.email != null && user.email!.contains('@hmfix.com'))
+                    {
+
+                      phone = user.email!.split('@')[0];
+
+                    } else if (user.phoneNumber != null) {
+
+                      phone = user.phoneNumber!.replaceAll('+88', '');
+                    }
+
+                    // print("PHONE = $phone");
+                    // print("USER = ${user.email}");
+                    // print("NUMBER = ${user.phoneNumber}");
 
                     final userDoc = await FirebaseFirestore.instance
                         .collection('users')
